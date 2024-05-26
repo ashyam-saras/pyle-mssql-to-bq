@@ -43,7 +43,7 @@ jobs:
       - name: Secret files
         run: |-
           echo "${{ secrets.SERVICE_ACCOUNT }}" > ./app/service_account.json
-          echo "${{ secrets.SSH_KEY }}" > ./ssh.key
+          echo "${{ vars.SSH_KEY }}" > ./ssh.key
           cat ./ssh.key
 
       - name: Build, tag and push container
