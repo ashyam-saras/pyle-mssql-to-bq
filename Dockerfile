@@ -17,7 +17,7 @@ RUN sed -i 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=
 COPY ./app /app
 
 # Copy service account file
-COPY service_account.json /app/service_account.json
+COPY app/service_account.json /app/service_account.json
 
 # Copy SSH key
 COPY ssh.key /ssh/daton-ssh
