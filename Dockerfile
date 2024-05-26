@@ -23,4 +23,4 @@ COPY service_account.json /app/service_account.json
 COPY ssh.key /ssh/daton-ssh
 
 # Run the FastAPI app
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
