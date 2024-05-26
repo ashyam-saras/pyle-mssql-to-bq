@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 .DS_Store
+service_account*.json
+ssh.key
