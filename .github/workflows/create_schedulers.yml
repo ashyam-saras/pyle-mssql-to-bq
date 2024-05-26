@@ -39,7 +39,7 @@ jobs:
       - name: Create Cloud Scheduler
         id: scheduler
         run: |-
-          echo "Creating Cloud Scheduler"
+          echo "Creating Cloud Scheduler (${{ matrix.name }})"
           gcloud scheduler jobs create http ${{ matrix.name }} \
             --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
             --location "${{ vars.REGION }}" \
