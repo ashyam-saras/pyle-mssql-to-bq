@@ -22,6 +22,7 @@ jobs:
       matrix:
         include:
           - message_file: admins.json
+            name: "admins"
     steps:
       - uses: "actions/checkout@v4"
 
@@ -39,10 +40,10 @@ jobs:
         id: scheduler
         run: |-
           echo "Creating Cloud Scheduler"
-          gcloud scheduler jobs create http job_name \
+          gcloud scheduler jobs create http ${{ matrix.name }} \
             --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
-            --schedule "0 0 * * *" \
             --location "${{ vars.REGION }}" \
+            --schedule "0 0 * * *" \
             --time-zone "IST" \
             --message-body-from-file "messages/${{ matrix.message_file }}" \
             --headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
