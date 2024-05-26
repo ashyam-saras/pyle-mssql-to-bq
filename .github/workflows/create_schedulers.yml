@@ -21,8 +21,36 @@ jobs:
     strategy:
       matrix:
         include:
+          - message_file: ActualAgedInventoryV3.json
+            name: "ActualAgedInventoryV3"
           - message_file: admins.json
             name: "admins"
+          - message_file: Categories_products.json
+            name: "Categories_products"
+          - message_file: categories.json
+            name: "categories"
+          - message_file: customers.json
+            name: "customers"
+          - message_file: Inventory.json
+            name: "Inventory"
+          - message_file: OrderDetail.json
+            name: "OrderDetail"
+          - message_file: orders.json
+            name: "orders"
+          - message_file: Products.json
+            name: "Products"
+          - message_file: suppliers.json
+            name: "suppliers"
+          - message_file: tblAVLInventoryForProcurement.json
+            name: "tblAVLInventoryForProcurement"
+          - message_file: tblCUFTData.json
+            name: "tblCUFTData"
+          - message_file: tblfbaprocurementdata.json
+            name: "tblfbaprocurementdata"
+          - message_file: VendorProducts.json
+            name: "VendorProducts"
+          - message_file: Warehouse.json
+            name: "Warehouse"
     steps:
       - uses: "actions/checkout@v4"
 

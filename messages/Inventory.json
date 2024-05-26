@@ -1,0 +1,4 @@
+{
+    "source_table": "Inventory",
+    "date_filter_column": "LastUpdated"
+}

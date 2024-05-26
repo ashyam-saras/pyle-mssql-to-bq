@@ -1,0 +1,5 @@
+{
+    "source_table": "ActualAgedInventoryV3",
+    "date_filter_column": "DateReceived",
+    "timestamp_columns": ["DateReceived"]
+}

@@ -1,0 +1,5 @@
+{
+    "source_table": "orders",
+    "date_filter_column": "orderDate",
+    "date_columns": ["orderDate", "PromisDate", "ShipDate"]
+}

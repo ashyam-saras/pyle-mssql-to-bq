@@ -1,0 +1,4 @@
+{
+    "source_table": "suppliers",
+    "date_filter_column": "DateSupAdded"
+}
