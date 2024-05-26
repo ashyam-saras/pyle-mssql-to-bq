@@ -20,3 +20,6 @@ services:
       - DB_USERNAME=
       - DB_PASSWORD=
       - DB_NAME=SAAudioItems
+      - BQ_PROJECT=solutionsdw
+      - BQ_DATASET=pyleus_dev
+      - GCS_BUCKET=mssql-to-bq-dev
