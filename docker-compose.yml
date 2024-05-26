@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mssql-to-bq-fastapi:
@@ -15,8 +15,8 @@ services:
       - SSH_HOST=35.238.200.205
       - SSH_PORT=22
       - SSH_USERNAME=guest
-      - DB_HOST=70.23.27.203
-      - DB_PORT=1435
-      - DB_USERNAME=saras
-      - DB_PASSWORD=!P}WmD+42>
+      - DB_HOST=
+      - DB_PORT=
+      - DB_USERNAME=
+      - DB_PASSWORD=
       - DB_NAME=SAAudioItems
