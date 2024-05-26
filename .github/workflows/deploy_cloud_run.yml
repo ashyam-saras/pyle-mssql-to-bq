@@ -54,32 +54,32 @@ jobs:
           tags: |
             ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}
 
-      - name: Create Service declaration
+      - name: Deploy Cloud Run
+        id: deploy1
         run: |-
-          echo "Creating service declaration"
-          export SERVICE_NAME="${{ vars.SERVICE_NAME }}"
-          export IMAGE="${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}"
-          export SERVICE_ACCOUNT_NAME="${{ vars.SERVICE_ACCOUNT_NAME }}"
-          export SSH_HOST="${{ vars.SSH_HOST }}"
-          export SSH_PORT="${{ vars.SSH_PORT }}"
-          export SSH_USERNAME="${{ vars.SSH_USERNAME }}"
-          export DB_HOST="${{ vars.DB_HOST }}"
-          export DB_PORT="${{ vars.DB_PORT }}"
-          export DB_USERNAME="${{ vars.DB_USERNAME }}"
-          export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-          export DB_NAME="${{ vars.DB_NAME }}"
-          export BQ_PROJECT="${{ vars.PROJECT_ID }}"
-          export BQ_DATASET="${{ vars.BQ_DATASET }}"
-          export GCS_BUCKET="${{ vars.GCS_BUCKET }}"
-
-          envsubst < ./service-template.yml > container.yml
-          cat container.yml
-
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: ${{ vars.service_name }}
-          region: ${{ vars.region }}
-          metadata: container.yml
-          flags: "--platform managed --allow-unauthenticated"
+          echo "Deployed to Cloud Run"
+          gcloud run deploy \
+            --image ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --region ${{ vars.REGION }} \
+            --service-account ${{ vars.SERVICE_ACCOUNT_NAME }} \
+            --timeout 540s \
+            --container-concurrency 1 \
+            --cpu 1 \
+            --memory 512Mi \
+            --timeout 540s \
+            --concurrency 1 \
+            --port 80 \
+            --max-instances 100 \
+            --set-env-vars "SSH_HOST=${{ vars.SSH_HOST }}" \
+            --set-env-vars "SSH_PORT=${{ vars.SSH_PORT }}" \
+            --set-env-vars "SSH_USERNAME=${{ vars.SSH_USERNAME }}" \
+            --set-env-vars "DB_HOST=${{ vars.DB_HOST }}" \
+            --set-env-vars "DB_PORT=${{ vars.DB_PORT }}" \
+            --set-env-vars "DB_USERNAME=${{ vars.DB_USERNAME }}" \
+            --set-env-vars "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+            --set-env-vars "DB_NAME=${{ vars.DB_NAME }}" \
+            --set-env-vars "BQ_PROJECT=${{ vars.PROJECT_ID }}" \
+            --set-env-vars "BQ_DATASET=${{ vars.BQ_DATASET }}" \
+            --set-env-vars "GCS_BUCKET=${{ vars.GCS_BUCKET }}"
