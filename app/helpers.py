@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sshtunnel import SSHTunnelForwarder
 
 logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger("gcf_helper")
+logger = logging.getLogger("helper")
 
 # SQL file directory
 SQL_DIR = Path(__file__).parent / "sql"
