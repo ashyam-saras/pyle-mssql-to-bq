@@ -6,7 +6,8 @@ on:
       - main
       - develop
     paths:
-      - "dag/**"
+      - "app/**"
+      - "Dockerfile"
       - ".github/workflows/deploy_cloud_run.yml"
   workflow_dispatch:
 
@@ -24,7 +25,7 @@ jobs:
       - id: auth
         uses: "google-github-actions/auth@v2"
         with:
-          credentials_json: "${{ secrets.SERVICE_ACCOUNT }}"
+          credentials_json: "${{ vars.SERVICE_ACCOUNT }}"
 
       - name: Set up Cloud SDK
         uses: "google-github-actions/setup-gcloud@v2"
@@ -36,13 +37,14 @@ jobs:
         uses: "docker/login-action@v3"
         with:
           username: "_json_key"
-          password: "${{ secrets.SERVICE_ACCOUNT }}"
+          password: "${{ vars.SERVICE_ACCOUNT }}"
           registry: "${{ vars.REGION }}-docker.pkg.dev"
 
       - name: Secret files
         run: |-
-          echo "${{ secrets.SERVICE_ACCOUNT }}" > ./service_account.json
+          echo '${{ vars.SERVICE_ACCOUNT }}' > ./app/service_account.json
           echo "${{ secrets.SSH_KEY }}" > ./ssh.key
+          cat ./app/service_account.json
 
       - name: Build, tag and push container
         id: build-image
@@ -53,31 +55,31 @@ jobs:
           tags: |
             ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}
 
-      - name: Create Service declaration
+      - name: Deploy Cloud Run
+        id: deploy1
         run: |-
-          echo "Creating service declaration"
-          export SERVICE_NAME="${{ vars.SERVICE_NAME }}"
-          export IMAGE="${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}"
-          export SERVICE_ACCOUNT="mssql-to-bigquery@soundarounddatondw.iam.gserviceaccount.com"
-          export SSH_HOST="${{ vars.SSH_HOST }}"
-          export SSH_PORT="${{ vars.SSH_PORT }}"
-          export SSH_USERNAME="${{ vars.SSH_USERNAME }}"
-          export DB_HOST="${{ vars.DB_HOST }}"
-          export DB_PORT="${{ vars.DB_PORT }}"
-          export DB_USERNAME="${{ vars.DB_USERNAME }}"
-          export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-          export DB_NAME="${{ vars.DB_NAME }}"
-          export BQ_PROJECT="${{ vars.PROJECT_ID }}"
-          export BQ_DATASET="${{ vars.BQ_DATASET }}"
-          export GCS_BUCKET="${{ vars.GCS_BUCKET }}"
-
-          envsubst < ./service-template.yml > container.yml
-          cat container.yml
-
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: ${{ vars.service_name }}
-          region: ${{ vars.region }}
-          metadata: container.yml
+          echo "Deployed to Cloud Run"
+          gcloud run deploy ${{ vars.SERVICE_NAME }} \
+            --image ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --region ${{ vars.REGION }} \
+            --service-account ${{ vars.SERVICE_ACCOUNT_NAME }} \
+            --timeout 540s \
+            --cpu 1 \
+            --memory 512Mi \
+            --timeout 540s \
+            --concurrency 1 \
+            --port 80 \
+            --max-instances 100 \
+            --set-env-vars "SSH_HOST=${{ vars.SSH_HOST }}" \
+            --set-env-vars "SSH_PORT=${{ vars.SSH_PORT }}" \
+            --set-env-vars "SSH_USERNAME=${{ vars.SSH_USERNAME }}" \
+            --set-env-vars "DB_HOST=${{ vars.DB_HOST }}" \
+            --set-env-vars "DB_PORT=${{ vars.DB_PORT }}" \
+            --set-env-vars "DB_USERNAME=${{ vars.DB_USERNAME }}" \
+            --set-env-vars "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+            --set-env-vars "DB_NAME=${{ vars.DB_NAME }}" \
+            --set-env-vars "BQ_PROJECT=${{ vars.PROJECT_ID }}" \
+            --set-env-vars "BQ_DATASET=${{ vars.BQ_DATASET }}" \
+            --set-env-vars "GCS_BUCKET=${{ vars.GCS_BUCKET }}"
