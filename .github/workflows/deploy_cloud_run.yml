@@ -56,20 +56,20 @@ jobs:
       - name: Create Service declaration
         run: |-
           echo "Creating service declaration"
-          export SERVICE_NAME=${{ vars.SERVICE_NAME }}
-          export IMAGE=${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}
-          export SERVICE_ACCOUNT=mssql-to-bigquery@soundarounddatondw.iam.gserviceaccount.com
-          export SSH_HOST=${{ vars.SSH_HOST }}
-          export SSH_PORT=${{ vars.SSH_PORT }}
-          export SSH_USERNAME=${{ vars.SSH_USERNAME }}
-          export DB_HOST=${{ vars.DB_HOST }}
-          export DB_PORT=${{ vars.DB_PORT }}
-          export DB_USERNAME=${{ vars.DB_USERNAME }}
-          export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          export DB_NAME=${{ vars.DB_NAME }}
-          export BQ_PROJECT=${{ vars.PROJECT_ID }}
-          export BQ_DATASET=${{ vars.BQ_DATASET }}
-          export GCS_BUCKET=${{ vars.GCS_BUCKET }}
+          export SERVICE_NAME="${{ vars.SERVICE_NAME }}"
+          export IMAGE="${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}"
+          export SERVICE_ACCOUNT="mssql-to-bigquery@soundarounddatondw.iam.gserviceaccount.com"
+          export SSH_HOST="${{ vars.SSH_HOST }}"
+          export SSH_PORT="${{ vars.SSH_PORT }}"
+          export SSH_USERNAME="${{ vars.SSH_USERNAME }}"
+          export DB_HOST="${{ vars.DB_HOST }}"
+          export DB_PORT="${{ vars.DB_PORT }}"
+          export DB_USERNAME="${{ vars.DB_USERNAME }}"
+          export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+          export DB_NAME="${{ vars.DB_NAME }}"
+          export BQ_PROJECT="${{ vars.PROJECT_ID }}"
+          export BQ_DATASET="${{ vars.BQ_DATASET }}"
+          export GCS_BUCKET="${{ vars.GCS_BUCKET }}"
 
           envsubst < ./service-template.yml > container.yml
           cat container.yml
