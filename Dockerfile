@@ -22,11 +22,5 @@ COPY service_account.json /app/service_account.json
 # Copy SSH key
 COPY ssh.key /ssh/daton-ssh
 
-# Environment variables
-ENV BQ_PROJECT=soundarounddatondw
-ENV BQ_DATASET=SoundAroundRawData
-ENV GCS_BUCKET=mssql-to-bq
-
-
 # Run the FastAPI app
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
