@@ -42,7 +42,7 @@ jobs:
 
       - name: Secret files
         run: |-
-          echo "${{ vars.SERVICE_ACCOUNT }}" > ./app/service_account.json
+          echo '${{ vars.SERVICE_ACCOUNT }}' > ./app/service_account.json
           echo "${{ secrets.SSH_KEY }}" > ./ssh.key
           cat ./app/service_account.json
 
