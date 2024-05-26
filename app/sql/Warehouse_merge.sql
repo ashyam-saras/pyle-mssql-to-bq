@@ -1,0 +1,85 @@
+-- Create main table if not exists
+CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
+    idWarehouse INT64,
+    idSupplier INT64,
+    WName STRING,
+    ContactName STRING,
+    ContactPhone STRING,
+    Address STRING,
+    City STRING,
+    State STRING,
+    Zipcode STRING,
+    DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+    Active INT64,
+    StockActive BOOLEAN,
+    ResetLocation INT64,
+    Wcompnay STRING,
+    UPSAcc STRING,
+    DoNotUseForAutoAllocation INT64,
+    jET_node_id STRING,
+    EmailId STRING,
+    StockDelayDays INT64,
+    WHOnorderStockDelayDays INT64,
+    GoFlowWName STRING,
+    AmazonVCWarehouseCode STRING,
+    AMZDFWorkbookName STRING,
+    HomeDepotPickUpWarehouseCode STRING
+);
+
+-- Merge data from temp table to main table
+MERGE {bq_project}.{bq_dataset}.{table_name} AS MAIN
+USING {bq_project}.{bq_dataset}.temp_{table_name} AS TEMP
+ON MAIN.idWarehouse = TEMP.idWarehouse
+WHEN MATCHED THEN
+    UPDATE SET
+        MAIN.idWarehouse = TEMP.idWarehouse,
+        MAIN.idSupplier = TEMP.idSupplier,
+        MAIN.WName = TEMP.WName,
+        MAIN.ContactName = TEMP.ContactName,
+        MAIN.ContactPhone = TEMP.ContactPhone,
+        MAIN.Address = TEMP.Address,
+        MAIN.City = TEMP.City,
+        MAIN.State = TEMP.State,
+        MAIN.Zipcode = TEMP.Zipcode,
+        MAIN.DateCreated = TEMP.DateCreated,
+        MAIN.Active = TEMP.Active,
+        MAIN.StockActive = TEMP.StockActive,
+        MAIN.ResetLocation = TEMP.ResetLocation,
+        MAIN.Wcompnay = TEMP.Wcompnay,
+        MAIN.UPSAcc = TEMP.UPSAcc,
+        MAIN.DoNotUseForAutoAllocation = TEMP.DoNotUseForAutoAllocation,
+        MAIN.jET_node_id = TEMP.jET_node_id,
+        MAIN.EmailId = TEMP.EmailId,
+        MAIN.StockDelayDays = TEMP.StockDelayDays,
+        MAIN.WHOnorderStockDelayDays = TEMP.WHOnorderStockDelayDays,
+        MAIN.GoFlowWName = TEMP.GoFlowWName,
+        MAIN.AmazonVCWarehouseCode = TEMP.AmazonVCWarehouseCode,
+        MAIN.AMZDFWorkbookName = TEMP.AMZDFWorkbookName,
+        MAIN.HomeDepotPickUpWarehouseCode = TEMP.HomeDepotPickUpWarehouseCode
+WHEN NOT MATCHED THEN
+INSERT VALUES (
+    TEMP.idWarehouse,
+    TEMP.idSupplier,
+    TEMP.WName,
+    TEMP.ContactName,
+    TEMP.ContactPhone,
+    TEMP.Address,
+    TEMP.City,
+    TEMP.State,
+    TEMP.Zipcode,
+    TEMP.DateCreated,
+    TEMP.Active,
+    TEMP.StockActive,
+    TEMP.ResetLocation,
+    TEMP.Wcompnay,
+    TEMP.UPSAcc,
+    TEMP.DoNotUseForAutoAllocation,
+    TEMP.jET_node_id,
+    TEMP.EmailId,
+    TEMP.StockDelayDays,
+    TEMP.WHOnorderStockDelayDays,
+    TEMP.GoFlowWName,
+    TEMP.AmazonVCWarehouseCode,
+    TEMP.AMZDFWorkbookName,
+    TEMP.HomeDepotPickUpWarehouseCode
+)
