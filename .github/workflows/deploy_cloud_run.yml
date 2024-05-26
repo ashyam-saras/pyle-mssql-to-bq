@@ -6,7 +6,8 @@ on:
       - main
       - develop
     paths:
-      - "dag/**"
+      - "app/**"
+      - "Dockerfile"
       - ".github/workflows/deploy_cloud_run.yml"
   workflow_dispatch:
 
