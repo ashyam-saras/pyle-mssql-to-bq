@@ -65,7 +65,7 @@ jobs:
             --region ${{ vars.REGION }} \
             --service-account ${{ vars.SERVICE_ACCOUNT_NAME }} \
             --timeout 540s \
-            --container-concurrency 1 \
+            --concurrency 1 \
             --cpu 1 \
             --memory 512Mi \
             --timeout 540s \
