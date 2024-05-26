@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   mssql-to-bq-fastapi:
     platform: linux/x86_64
