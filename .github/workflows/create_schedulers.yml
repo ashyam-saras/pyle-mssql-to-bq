@@ -7,7 +7,7 @@ on:
       - develop
     paths:
       - "messages/**"
-      - ".github/workflows/deploy_cloud_run.yml"
+      - ".github/workflows/create_schedulers.yml"
   workflow_dispatch:
 
 concurrency:
