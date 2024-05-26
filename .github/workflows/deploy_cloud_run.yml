@@ -58,7 +58,7 @@ jobs:
         id: deploy1
         run: |-
           echo "Deployed to Cloud Run"
-          gcloud run deploy \
+          gcloud run deploy ${{ vars.SERVICE_NAME }} \
             --image ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }} \
             --platform managed \
             --allow-unauthenticated \
