@@ -16,27 +16,27 @@ spec:
               containerPort: 80
           env:
             - name: SSH_HOST
-              value: ${SSH_HOST}
+              value: "${SSH_HOST}"
             - name: SSH_PORT
-              value: ${SSH_PORT}
+              value: "${SSH_PORT}"
             - name: SSH_USERNAME
-              value: ${SSH_USERNAME}
+              value: "${SSH_USERNAME}"
             - name: DB_HOST
-              value: ${DB_HOST}
+              value: "${DB_HOST}"
             - name: DB_PORT
-              value: ${DB_PORT}
+              value: "${DB_PORT}"
             - name: DB_USERNAME
-              value: ${DB_USERNAME}
+              value: "${DB_USERNAME}"
             - name: DB_PASSWORD
-              value: ${DB_PASSWORD}
+              value: "${DB_PASSWORD}"
             - name: DB_NAME
-              value: ${DB_NAME}
+              value: "${DB_NAME}"
             - name: BQ_PROJECT
-              value: ${BQ_PROJECT}
+              value: "${BQ_PROJECT}"
             - name: BQ_DATASET
-              value: ${BQ_DATASET}
+              value: "${BQ_DATASET}"
             - name: GCS_BUCKET
-              value: ${GCS_BUCKET}
+              value: "${GCS_BUCKET}"
           resources:
             limits:
               cpu: 1000m
