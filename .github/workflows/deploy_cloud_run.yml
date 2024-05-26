@@ -58,7 +58,7 @@ jobs:
           echo "Creating service declaration"
           export SERVICE_NAME="${{ vars.SERVICE_NAME }}"
           export IMAGE="${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}"
-          export SERVICE_ACCOUNT="mssql-to-bigquery@soundarounddatondw.iam.gserviceaccount.com"
+          export SERVICE_ACCOUNT_NAME="${{ vars.SERVICE_ACCOUNT_NAME }}"
           export SSH_HOST="${{ vars.SSH_HOST }}"
           export SSH_PORT="${{ vars.SSH_PORT }}"
           export SSH_USERNAME="${{ vars.SSH_USERNAME }}"
