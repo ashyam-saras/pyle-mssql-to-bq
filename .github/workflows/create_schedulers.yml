@@ -42,6 +42,7 @@ jobs:
           gcloud scheduler jobs create http job_name \
             --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
             --schedule "0 0 * * *" \
+            --location "${{ vars.REGION }}" \
             --time-zone "IST" \
             --message-body-from-file "messages/${{ matrix.message_file }}" \
             --headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
