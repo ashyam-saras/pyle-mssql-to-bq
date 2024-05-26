@@ -190,7 +190,7 @@ WHEN MATCHED THEN
         MAIN.IsCampaignManager = TEMP.IsCampaignManager,
         MAIN.Country = TEMP.Country,
         MAIN.PrepareQtyCapability = TEMP.PrepareQtyCapability,
-        MAIN.LoginAttempt = TEMP.LoginAttempt
+        MAIN.LoginAttempt = TEMP.LoginAttempt,
         MAIN.AmazonOrderTypeSelected = TEMP.AmazonOrderTypeSelected,
         MAIN.FilteredAmazonPO = TEMP.FilteredAmazonPO,
         MAIN.FilteredAmazonSKU = TEMP.FilteredAmazonSKU
