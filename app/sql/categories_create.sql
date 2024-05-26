@@ -1,0 +1,22 @@
+CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.temp_{table_name} (
+    idCategory INT64,
+    CategoryDesc STRING,
+    idParentCategory INT64,
+    displayOrder INT64,
+    active INT64,
+    imageCategory STRING,
+    CAtegoryDetail STRING,
+    PageTitle STRING,
+    MetaTag STRING,
+    MetaDesc STRING,
+    siteMapHedder STRING,
+    SiteMapDesc STRING,
+    ImageBanner STRING,
+    H1Headline STRING,
+    H2Headline STRING,
+    ogType STRING,
+    ogTitle STRING,
+    ogDesc STRING,
+    H1Desc STRING,
+    H2Desc STRING
+);

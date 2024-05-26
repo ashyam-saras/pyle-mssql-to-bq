@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  mssql-to-bq-fastapi:
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mssql-to-bq-fastapi
+    ports:
+      - 80:80
+    volumes:
+      - ./app:/app:rw
+    environment:
+      - SSH_HOST=35.238.200.205
+      - SSH_PORT=22
+      - SSH_USERNAME=guest
+      - DB_HOST=
+      - DB_PORT=
+      - DB_USERNAME=
+      - DB_PASSWORD=
+      - DB_NAME=SAAudioItems
