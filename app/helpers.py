@@ -1,11 +1,16 @@
+import logging
 import os
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
 
 import pandas as pd
+from google.cloud import bigquery, storage
 from sqlalchemy import create_engine
 from sshtunnel import SSHTunnelForwarder
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger("gcf_helper")
 
 # SQL file directory
 SQL_DIR = Path(__file__).parent / "sql"
