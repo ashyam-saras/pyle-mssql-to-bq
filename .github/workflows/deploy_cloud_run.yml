@@ -35,6 +35,11 @@ jobs:
           password: "${{ secrets.SERVICE_ACCOUNT }}"
           registry: "${{ vars.REGION }}-docker.pkg.dev"
 
+      - name: Secret files
+        run: |-
+          echo "${{ secrets.SERVICE_ACCOUNT }}" > ./service-account.json
+          echo "${{ secrets.SSH_KEY }}" > ./ssh.key
+
       - name: Build, tag and push container
         id: build-image
         uses: docker/build-push-action@v3
