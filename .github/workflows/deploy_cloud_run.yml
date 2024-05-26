@@ -37,7 +37,7 @@ jobs:
         uses: "docker/login-action@v3"
         with:
           username: "_json_key"
-          password: "${{ secrets.SERVICE_ACCOUNT }}"
+          password: "${{ vars.SERVICE_ACCOUNT }}"
           registry: "${{ vars.REGION }}-docker.pkg.dev"
 
       - name: Secret files
