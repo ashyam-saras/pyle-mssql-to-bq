@@ -10,6 +10,8 @@ on:
       - ".github/workflows/deploy_cloud_run.yml"
   workflow_dispatch:
 
+concurrency
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -67,8 +69,8 @@ jobs:
           export BQ_DATASET=${{ vars.BQ_DATASET }}
           export GCS_BUCKET=${{ vars.GCS_BUCKET }}
 
-          envsubst < ./service-template.yaml > container.yaml
-          cat container.yaml
+          envsubst < ./service-template.yml > container.yml
+          cat container.yml
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -76,4 +78,4 @@ jobs:
         with:
           service: ${{ vars.service_name }}
           region: ${{ vars.region }}
-          metadata: container.yaml
+          metadata: container.yml
