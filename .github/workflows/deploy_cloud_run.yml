@@ -67,7 +67,7 @@ jobs:
           export BQ_DATASET=${{ vars.BQ_DATASET }}
           export GCS_BUCKET=${{ vars.GCS_BUCKET }}
 
-          envsubst < ./service-yaml/container.yaml > container.yaml
+          envsubst < ./service-template.yaml > container.yaml
           cat container.yaml
 
       - name: Deploy to Cloud Run
