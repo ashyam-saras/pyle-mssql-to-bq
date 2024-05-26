@@ -10,7 +10,9 @@ on:
       - ".github/workflows/deploy_cloud_run.yml"
   workflow_dispatch:
 
-concurrency
+concurrency:
+  group: "Cloud Run"
+  cancel-in-progress: true
 
 jobs:
   deploy:
