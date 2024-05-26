@@ -55,9 +55,9 @@ jobs:
             ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}
 
       - name: Deploy Cloud Run
-        id: deploy1
+        id: cloud-run
         run: |-
-          echo "Deployed to Cloud Run"
+          echo "Deploying to Cloud Run"
           gcloud run deploy ${{ vars.SERVICE_NAME }} \
             --image ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }} \
             --platform managed \
