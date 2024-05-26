@@ -82,3 +82,4 @@ jobs:
           service: ${{ vars.service_name }}
           region: ${{ vars.region }}
           metadata: container.yml
+          flags: "--platform managed --allow-unauthenticated"
