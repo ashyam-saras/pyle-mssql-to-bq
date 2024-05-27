@@ -64,14 +64,26 @@ jobs:
         with:
           project_id: ${{ vars.PROJECT_ID }}
 
-      - name: Create Cloud Scheduler
+      - name: Create or Update Cloud Scheduler
         id: scheduler
         run: |-
-          echo "Creating Cloud Scheduler (${{ matrix.name }})"
-          gcloud scheduler jobs create http ${{ matrix.name }} \
-            --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
-            --location "${{ vars.REGION }}" \
-            --schedule "0 0 * * *" \
-            --time-zone "IST" \
-            --message-body-from-file "messages/${{ matrix.message_file }}" \
-            --headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
+          echo "Checking if Cloud Scheduler job ${{ matrix.name }} exists..."
+          if gcloud scheduler jobs describe ${{ matrix.name }} --location "${{ vars.REGION }}" &> /dev/null; then
+            echo "Updating existing Cloud Scheduler job ${{ matrix.name }}..."
+            gcloud scheduler jobs update http ${{ matrix.name }} \
+              --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
+              --location "${{ vars.REGION }}" \
+              --schedule "0 0 * * *" \
+              --time-zone "IST" \
+              --message-body-from-file "messages/${{ matrix.message_file }}" \
+              --headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
+          else
+            echo "Creating new Cloud Scheduler job ${{ matrix.name }}..."
+            gcloud scheduler jobs create http ${{ matrix.name }} \
+              --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
+              --location "${{ vars.REGION }}" \
+              --schedule "0 0 * * *" \
+              --time-zone "IST" \
+              --message-body-from-file "messages/${{ matrix.message_file }}" \
+              --headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
+          fi
