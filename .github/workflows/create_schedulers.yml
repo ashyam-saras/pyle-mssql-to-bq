@@ -76,7 +76,7 @@ jobs:
               --schedule "0 0 * * *" \
               --time-zone "IST" \
               --message-body-from-file "messages/${{ matrix.message_file }}" \
-              --headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
+              --update-headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
           else
             echo "Creating new Cloud Scheduler job ${{ matrix.name }}..."
             gcloud scheduler jobs create http ${{ matrix.name }} \
