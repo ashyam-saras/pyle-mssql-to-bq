@@ -1,0 +1,4 @@
+{
+    "source_table": "customers",
+    "date_filter_column": "dateRegistered"
+}

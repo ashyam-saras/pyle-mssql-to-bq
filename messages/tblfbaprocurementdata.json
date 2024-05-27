@@ -1,0 +1,5 @@
+{
+    "source_table": "[192.168.9.10].[SoundAroundDW].dbo.tblfbaprocurementdata",
+    "destination_table": "tblfbaprocurementdata",
+    "date_filter_column": "CreatedData"
+}

@@ -1,0 +1,89 @@
+name: Create Schedulers
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "messages/**"
+      - ".github/workflows/create_schedulers.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: "Cloud Run"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'Production' || 'Development' }}
+    strategy:
+      matrix:
+        include:
+          - message_file: ActualAgedInventoryV3.json
+            name: "ActualAgedInventoryV3"
+          - message_file: admins.json
+            name: "admins"
+          - message_file: Categories_products.json
+            name: "Categories_products"
+          - message_file: categories.json
+            name: "categories"
+          - message_file: customers.json
+            name: "customers"
+          - message_file: Inventory.json
+            name: "Inventory"
+          - message_file: OrderDetail.json
+            name: "OrderDetail"
+          - message_file: orders.json
+            name: "orders"
+          - message_file: Products.json
+            name: "Products"
+          - message_file: suppliers.json
+            name: "suppliers"
+          - message_file: tblAVLInventoryForProcurement.json
+            name: "tblAVLInventoryForProcurement"
+          - message_file: tblCUFTData.json
+            name: "tblCUFTData"
+          - message_file: tblfbaprocurementdata.json
+            name: "tblfbaprocurementdata"
+          - message_file: VendorProducts.json
+            name: "VendorProducts"
+          - message_file: Warehouse.json
+            name: "Warehouse"
+    steps:
+      - uses: "actions/checkout@v4"
+
+      - id: auth
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT }}"
+
+      - name: Set up Cloud SDK
+        uses: "google-github-actions/setup-gcloud@v2"
+        with:
+          project_id: ${{ vars.PROJECT_ID }}
+
+      - name: Create or Update Cloud Scheduler
+        id: scheduler
+        run: |-
+          echo "Checking if Cloud Scheduler job ${{ matrix.name }} exists..."
+          if gcloud scheduler jobs describe ${{ matrix.name }} --location "${{ vars.REGION }}" &> /dev/null; then
+            echo "Updating existing Cloud Scheduler job ${{ matrix.name }}..."
+            gcloud scheduler jobs update http ${{ matrix.name }} \
+              --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
+              --location "${{ vars.REGION }}" \
+              --schedule "0 0 * * *" \
+              --time-zone "IST" \
+              --message-body-from-file "messages/${{ matrix.message_file }}" \
+              --update-headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
+          else
+            echo "Creating new Cloud Scheduler job ${{ matrix.name }}..."
+            gcloud scheduler jobs create http ${{ matrix.name }} \
+              --uri "https://msssql-to-bq-fastpi-uydebvdw6a-uc.a.run.app/${{ vars.SERVICE_NAME }}" \
+              --location "${{ vars.REGION }}" \
+              --schedule "0 0 * * *" \
+              --time-zone "IST" \
+              --message-body-from-file "messages/${{ matrix.message_file }}" \
+              --headers "Content-Type=application/json,User-Agent=Google-Cloud-Scheduler"
+          fi

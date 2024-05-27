@@ -1,0 +1,5 @@
+{
+    "source_table": "Products",
+    "date_filter_column": "LastupdateDate",
+    "timestamp_columns": ["DateAvailable"]
+}

@@ -1,0 +1,4 @@
+{
+    "source_table": "Warehouse",
+    "date_filter_column": "DateCreated"
+}
