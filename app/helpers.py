@@ -122,6 +122,7 @@ def merge_temp_table(
     bq_project: str,
     bq_dataset: str,
     table_name: str,
+    temp_table: str,
     delete_temp_table: bool = True,
 ):
     """
@@ -151,6 +152,7 @@ def merge_temp_table(
         bq_project=bq_project,
         bq_dataset=bq_dataset,
         table_name=table_name,
+        temp_table=temp_table,
     )
 
     logger.debug("Executing query: %s", query)
@@ -160,7 +162,7 @@ def merge_temp_table(
 
     if delete_temp_table:
         logger.info("Deleting temp table.")
-        bq_client.delete_table(f"{bq_project}.{bq_dataset}.temp_{table_name}")
+        bq_client.delete_table(f"{bq_project}.{bq_dataset}.{temp_table}")
         logger.info("Deleted temp table.")
 
 

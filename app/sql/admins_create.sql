@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.temp_{table_name} (
+CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     idAdmin INT64,
     adminName STRING,
     adminPassword STRING,
