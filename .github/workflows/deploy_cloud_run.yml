@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: "Cloud Run"
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -64,9 +64,8 @@ jobs:
             --allow-unauthenticated \
             --region ${{ vars.REGION }} \
             --service-account ${{ vars.SERVICE_ACCOUNT_NAME }} \
-            --timeout 540s \
             --cpu 1 \
-            --memory 2Gi \
+            --memory 6Gi \
             --timeout 540s \
             --concurrency 1 \
             --port 80 \
