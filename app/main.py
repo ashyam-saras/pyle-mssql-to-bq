@@ -43,6 +43,11 @@ DATE_FMT = r"%Y-%m-%d"
 TIMESTAMP_FMT = r"%Y-%m-%d %H:%M:%S"
 
 
+# Check if the service account file exists
+if not SERVICE_ACCOUNT_PATH.exists():
+    raise FileNotFoundError(f"Service account file not found.")
+
+
 @app.post("/mssql_to_bq")
 async def mssql_to_bq(request: Request):
     """
