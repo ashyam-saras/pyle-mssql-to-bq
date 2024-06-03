@@ -23,12 +23,14 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     GoFlowWName STRING,
     AmazonVCWarehouseCode STRING,
     AMZDFWorkbookName STRING,
-    HomeDepotPickUpWarehouseCode STRING
+    HomeDepotPickUpWarehouseCode STRING,
+    WarehouseName STRING,
+    warehouseCountry STRING
 );
 
 -- Merge data from temp table to main table
 MERGE {bq_project}.{bq_dataset}.{table_name} AS MAIN
-USING {bq_project}.{bq_dataset}.temp_{table_name} AS TEMP
+USING {bq_project}.{bq_dataset}.{temp_table_name} AS TEMP
 ON MAIN.idWarehouse = TEMP.idWarehouse
 WHEN MATCHED THEN
     UPDATE SET
@@ -55,7 +57,9 @@ WHEN MATCHED THEN
         MAIN.GoFlowWName = TEMP.GoFlowWName,
         MAIN.AmazonVCWarehouseCode = TEMP.AmazonVCWarehouseCode,
         MAIN.AMZDFWorkbookName = TEMP.AMZDFWorkbookName,
-        MAIN.HomeDepotPickUpWarehouseCode = TEMP.HomeDepotPickUpWarehouseCode
+        MAIN.HomeDepotPickUpWarehouseCode = TEMP.HomeDepotPickUpWarehouseCode,
+        MAIN.WarehouseName = TEMP.WarehouseName,
+        MAIN.warehouseCountry = TEMP.warehouseCountry
 WHEN NOT MATCHED THEN
 INSERT VALUES (
     TEMP.idWarehouse,
@@ -81,5 +85,7 @@ INSERT VALUES (
     TEMP.GoFlowWName,
     TEMP.AmazonVCWarehouseCode,
     TEMP.AMZDFWorkbookName,
-    TEMP.HomeDepotPickUpWarehouseCode
+    TEMP.HomeDepotPickUpWarehouseCode,
+    TEMP.WarehouseName,
+    TEMP.warehouseCountry
 )

@@ -20,9 +20,10 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
 
 -- Merge data from temp table to main table
 MERGE {bq_project}.{bq_dataset}.{table_name} AS MAIN
-USING {bq_project}.{bq_dataset}.temp_{table_name} AS TEMP
+USING {bq_project}.{bq_dataset}.{temp_table_name} AS TEMP
 ON MAIN.RowNum = TEMP.RowNum
     AND MAIN.Item_ = TEMP.Item_
+    AND MAIN.DateReceived = TEMP.DateReceived
 WHEN MATCHED THEN
     UPDATE SET
         MAIN.RowNum = TEMP.RowNum,

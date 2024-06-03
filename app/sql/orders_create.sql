@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.temp_{table_name} (
+CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     idOrder INT64,
     OLDorderDate STRING,
     orderDate DATE,
@@ -113,5 +113,7 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.temp_{table_name} (
     Tag STRING,
     PrintedOrderResetBy INT64,
     PrintedOrderResetDate TIMESTAMP,
-    IsFBARepackShipment BOOLEAN
+    IsFBARepackShipment BOOLEAN,
+    ShipmentReadyDate TIMESTAMP,
+    OrderCancelDate TIMESTAMP
 );

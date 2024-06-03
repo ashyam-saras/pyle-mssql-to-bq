@@ -43,6 +43,11 @@ DATE_FMT = r"%Y-%m-%d"
 TIMESTAMP_FMT = r"%Y-%m-%d %H:%M:%S"
 
 
+# Check if the service account file exists
+if not SERVICE_ACCOUNT_PATH.exists():
+    raise FileNotFoundError(f"Service account file not found.")
+
+
 @app.post("/mssql_to_bq")
 async def mssql_to_bq(request: Request):
     """
@@ -79,6 +84,10 @@ async def mssql_to_bq(request: Request):
     if end_date is None:
         end_date = datetime.now().strftime(r"%Y-%m-%d")
 
+    # Initialize GCP clients
+    storage_client = storage.Client.from_service_account_json(SERVICE_ACCOUNT_PATH)
+    bigquery_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_PATH)
+
     # Query data from MSSQL
     logger.info("Querying data from MSSQL.")
     if mode == "historical" or date_filter_col is None:
@@ -92,18 +101,8 @@ async def mssql_to_bq(request: Request):
         file_name = file_name or f"{source_table}-{start_date}-{end_date}.csv"
     logger.debug("Rows queried: %s", len(df))
 
-    # Upload raw data to BigQuery
-    # ! Change this to storage.Client() before deploying to GCP
-    logger.info("Uploading raw data to BigQuery.")
-    storage_client = storage.Client.from_service_account_json(SERVICE_ACCOUNT_PATH)
-    raw_csv_file_name = Path(f"raw-{file_name}")
-    df.replace({"\x00": ""}, regex=True).to_csv(
-        raw_csv_file_name,
-        index=False,
-        quoting=csv.QUOTE_NONNUMERIC,
-    )
-    gs_csv_file_path = f"{gcs_path}/{raw_csv_file_name}"
-    upload_to_gs(storage_client, gcs_bucket, gs_csv_file_path, raw_csv_file_name)
+    clean_df = df.copy()
+    clean_df = clean_df.replace({"\x00": ""}, regex=True)
 
     # Save data to a temporary CSV
     temp_csv_path = Path(__file__).parent / file_name
@@ -112,28 +111,42 @@ async def mssql_to_bq(request: Request):
         df[date_cols] = df[date_cols].map(lambda x: safe_strftime(x, DATE_FMT))
     if not df[timestamp_cols].isnull().all().all():
         df[timestamp_cols] = df[timestamp_cols].map(lambda x: safe_strftime(x, TIMESTAMP_FMT))
-    df.replace({"\x00": ""}, regex=True).to_csv(
-        temp_csv_path,
-        index=False,
-        quoting=csv.QUOTE_NONNUMERIC,
-    )
-
-    # Create temporary table in BigQuery
-    # ! Change this to storage.Client() before deploying to GCP
-    bigquery_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_PATH)
-    create_temp_table(bigquery_client, BQ_PROJECT, BQ_DATASET, dest_table)
+    clean_df.to_csv(temp_csv_path, index=False, quoting=csv.QUOTE_NONNUMERIC)
 
     # Upload CSV to temp GCS
     gs_csv_file_path = f"{gcs_path}/{file_name}"
     upload_to_gs(storage_client, gcs_bucket, gs_csv_file_path, temp_csv_path)
 
-    # Load data from GCS to BigQuery
+    # Load data from GCS to BigQuery, create temporary table, and merge with destination table
     uri = f"gs://{gcs_bucket}/{gs_csv_file_path}"
     temp_table = f"temp_{dest_table}"
-    gs_csv_to_bq(bigquery_client, uri, BQ_PROJECT, BQ_DATASET, temp_table)
+    create_sql_fname = f"{source_table}_create.sql"
+    merge_sql_fname = f"{source_table}_merge.sql"
 
-    # Merge temp table with destination table
-    merge_temp_table(bigquery_client, BQ_PROJECT, BQ_DATASET, dest_table)
+    # Create temporary table, load data from GCS to BigQuery, and merge with destination table
+    create_temp_table(
+        bigquery_client,
+        BQ_PROJECT,
+        BQ_DATASET,
+        create_sql_fname,
+        temp_table,
+    )
+    gs_csv_to_bq(
+        bigquery_client,
+        BQ_PROJECT,
+        BQ_DATASET,
+        uri,
+        temp_table,
+    )
+    merge_temp_table(
+        bigquery_client,
+        BQ_PROJECT,
+        BQ_DATASET,
+        merge_sql_fname,
+        dest_table,
+        temp_table,
+        drop_and_create=drop_and_create,
+    )
 
     # Delete temporary CSV
     logger.info("Deleting temporary CSV.")
