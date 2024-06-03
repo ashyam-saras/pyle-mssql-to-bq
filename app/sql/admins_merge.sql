@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     Country STRING,
     PrepareQtyCapability BOOL,
     LoginAttempt INT64,
-    AmazonOrderTypeSelected INT64,
+    AmazonOrderTypeSelected STRING,
     FilteredAmazonPO STRING,
     FilteredAmazonSKU STRING
 );
