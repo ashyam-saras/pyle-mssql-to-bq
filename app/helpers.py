@@ -83,6 +83,7 @@ def create_temp_table(
     bq_client: bigquery.Client,
     bq_project: str,
     bq_dataset: str,
+    create_sql_fname: str,
     table_name: str,
 ):
     """
@@ -92,10 +93,11 @@ def create_temp_table(
         bq_client (bigquery.Client): The BigQuery client.
         bq_project (str): The BigQuery project.
         bq_dataset (str): The BigQuery dataset.
+        create_sql_fname (str): The name of the SQL file containing the create table query.
         table_name (str): The name of the table to create.
     """
     logger.info("Creating temp table.")
-    query_path = SQL_DIR / f"{table_name}_create.sql"
+    query_path = SQL_DIR / create_sql_fname
     if not query_path.exists():
         logger.error("%s not found.", query_path)
         raise FileNotFoundError("SQL file not found. Must be named `{src_table}_create.sql`.")
@@ -121,9 +123,11 @@ def merge_temp_table(
     bq_client: bigquery.Client,
     bq_project: str,
     bq_dataset: str,
+    merge_sql_fname: str,
     table_name: str,
     temp_table: str,
     delete_temp_table: bool = True,
+    drop_and_create: bool = False,
 ):
     """
     Merge a temporary table with the destination table.
@@ -132,14 +136,17 @@ def merge_temp_table(
         bq_client (bigquery.Client): The BigQuery client.
         bq_project (str): The BigQuery project.
         bq_dataset (str): The BigQuery dataset.
+        merge_sql_fname (str): The name of the SQL file containing the merge query.
         table_name (str): The name of the table to merge.
         delete_temp_table (bool, optional): Whether to delete the temporary table after
             merging. Defaults to True.
+        drop_and_create (bool, optional): Whether to drop and create the destination table before
+            merging. Defaults to False.
     """
     logger.info("Merging temp table with destination table.")
 
     # Check if merge SQL file exists
-    query_path = SQL_DIR / f"{table_name}_merge.sql"
+    query_path = SQL_DIR / merge_sql_fname
     if not query_path.exists():
         raise FileNotFoundError("SQL file not found. Must be named `{src_table}_merge.sql`.")
 
@@ -153,7 +160,15 @@ def merge_temp_table(
         bq_dataset=bq_dataset,
         table_name=table_name,
         temp_table=temp_table,
+        temp_table_name=temp_table,
     )
+
+    if drop_and_create:
+        logger.info("Dropping destination table.")
+        drop_query = f"DROP TABLE IF EXISTS {bq_project}.{bq_dataset}.{table_name}"
+        execute_job = bq_client.query(drop_query)
+        execute_job.result()
+        logger.info("Dropped destination table.")
 
     logger.debug("Executing query: %s", query)
     execute_job = bq_client.query(query)
@@ -191,9 +206,9 @@ def upload_to_gs(
 
 def gs_csv_to_bq(
     bq_client: bigquery.Client,
-    gs_uri: str,
     bq_project: str,
     bq_dataset: str,
+    gs_uri: str,
     table_name: str,
 ):
     """

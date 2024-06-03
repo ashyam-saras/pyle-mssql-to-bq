@@ -120,9 +120,33 @@ async def mssql_to_bq(request: Request):
     # Load data from GCS to BigQuery, create temporary table, and merge with destination table
     uri = f"gs://{gcs_bucket}/{gs_csv_file_path}"
     temp_table = f"temp_{dest_table}"
-    create_temp_table(bigquery_client, BQ_PROJECT, BQ_DATASET, temp_table)
-    gs_csv_to_bq(bigquery_client, uri, BQ_PROJECT, BQ_DATASET, temp_table)
-    merge_temp_table(bigquery_client, BQ_PROJECT, BQ_DATASET, dest_table, temp_table)
+    create_sql_fname = f"{source_table}_create.sql"
+    merge_sql_fname = f"{source_table}_merge.sql"
+
+    # Create temporary table, load data from GCS to BigQuery, and merge with destination table
+    create_temp_table(
+        bigquery_client,
+        BQ_PROJECT,
+        BQ_DATASET,
+        create_sql_fname,
+        temp_table,
+    )
+    gs_csv_to_bq(
+        bigquery_client,
+        BQ_PROJECT,
+        BQ_DATASET,
+        uri,
+        temp_table,
+    )
+    merge_temp_table(
+        bigquery_client,
+        BQ_PROJECT,
+        BQ_DATASET,
+        merge_sql_fname,
+        dest_table,
+        temp_table,
+        drop_and_create=drop_and_create,
+    )
 
     # Delete temporary CSV
     logger.info("Deleting temporary CSV.")
