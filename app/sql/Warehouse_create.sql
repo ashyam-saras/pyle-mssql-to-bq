@@ -22,5 +22,7 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     GoFlowWName STRING,
     AmazonVCWarehouseCode STRING,
     AMZDFWorkbookName STRING,
-    HomeDepotPickUpWarehouseCode STRING
+    HomeDepotPickUpWarehouseCode STRING,
+    WarehouseName STRING,
+    warehouseCountry STRING
 );

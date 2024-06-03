@@ -197,7 +197,10 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     ToolingFee STRING,
     LaunchDate TIMESTAMP,
     LifeCycleNotes STRING,
-    AmazonSellingPrice FLOAT64
+    AmazonSellingPrice FLOAT64,
+    Body_HTMlUpdate STRING,
+    ReviewedByComplianceConsultant BOOLEAN,
+    ConsultantCompany STRING
 );
 
 -- Merge data from temp table to main table
@@ -403,7 +406,10 @@ WHEN MATCHED THEN
         MAIN.ToolingFee = TEMP.ToolingFee,
         MAIN.LaunchDate = TEMP.LaunchDate,
         MAIN.LifeCycleNotes = TEMP.LifeCycleNotes,
-        MAIN.AmazonSellingPrice = TEMP.AmazonSellingPrice
+        MAIN.AmazonSellingPrice = TEMP.AmazonSellingPrice,
+        MAIN.Body_HTMlUpdate = TEMP.Body_HTMlUpdate,
+        MAIN.ReviewedByComplianceConsultant = TEMP.ReviewedByComplianceConsultant,
+        MAIN.ConsultantCompany = TEMP.ConsultantCompany
 WHEN NOT MATCHED THEN
 INSERT VALUES (
     TEMP.idProduct,
@@ -603,5 +609,8 @@ INSERT VALUES (
     TEMP.ToolingFee,
     TEMP.LaunchDate,
     TEMP.LifeCycleNotes,
-    TEMP.AmazonSellingPrice
+    TEMP.AmazonSellingPrice,
+    TEMP.Body_HTMlUpdate,
+    TEMP.ReviewedByComplianceConsultant,
+    TEMP.ConsultantCompany
 )

@@ -76,7 +76,8 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     CSLPrice2 FLOAT64 DEFAULT 0.0,
     CSLPrice3 FLOAT64 DEFAULT 0.0,
     idBuyer INT64,
-    CostEffectiveDate DATE
+    CostEffectiveDate DATE,
+    ShippingVolumne INT64
 );
 
 -- Merge data from temp table to main table
@@ -161,7 +162,8 @@ WHEN MATCHED THEN
         MAIN.CSLPrice2 = TEMP.CSLPrice2,
         MAIN.CSLPrice3 = TEMP.CSLPrice3,
         MAIN.idBuyer = TEMP.idBuyer,
-        MAIN.CostEffectiveDate = TEMP.CostEffectiveDate
+        MAIN.CostEffectiveDate = TEMP.CostEffectiveDate,
+        MAIN.ShippingVolumne = TEMP.ShippingVolumne
 WHEN NOT MATCHED THEN
 INSERT VALUES (
     TEMP.idVendorProducts,
@@ -240,5 +242,6 @@ INSERT VALUES (
     TEMP.CSLPrice2,
     TEMP.CSLPrice3,
     TEMP.idBuyer,
-    TEMP.CostEffectiveDate
+    TEMP.CostEffectiveDate,
+    TEMP.ShippingVolumne
 )

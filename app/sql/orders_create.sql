@@ -113,5 +113,7 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     Tag STRING,
     PrintedOrderResetBy INT64,
     PrintedOrderResetDate TIMESTAMP,
-    IsFBARepackShipment BOOLEAN
+    IsFBARepackShipment BOOLEAN,
+    ShipmentReadyDate TIMESTAMP,
+    OrderCancelDate TIMESTAMP
 );

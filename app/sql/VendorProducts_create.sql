@@ -75,5 +75,6 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     CSLPrice2 FLOAT64 DEFAULT 0.0,
     CSLPrice3 FLOAT64 DEFAULT 0.0,
     idBuyer INT64,
-    CostEffectiveDate DATE
+    CostEffectiveDate DATE,
+    ShippingVolumne INT64
 );

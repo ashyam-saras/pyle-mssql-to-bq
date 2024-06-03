@@ -114,7 +114,9 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     Tag STRING,
     PrintedOrderResetBy INT64,
     PrintedOrderResetDate TIMESTAMP,
-    IsFBARepackShipment BOOLEAN
+    IsFBARepackShipment BOOLEAN,
+    ShipmentReadyDate TIMESTAMP,
+    OrderCancelDate TIMESTAMP
 );
 
 -- Merge data from temp table to main table
@@ -237,7 +239,9 @@ WHEN MATCHED THEN
         MAIN.Tag = TEMP.Tag,
         MAIN.PrintedOrderResetBy = TEMP.PrintedOrderResetBy,
         MAIN.PrintedOrderResetDate = TEMP.PrintedOrderResetDate,
-        MAIN.IsFBARepackShipment = TEMP.IsFBARepackShipment
+        MAIN.IsFBARepackShipment = TEMP.IsFBARepackShipment,
+        MAIN.ShipmentReadyDate = TEMP.ShipmentReadyDate,
+        MAIN.OrderCancelDate = TEMP.OrderCancelDate
 WHEN NOT MATCHED THEN
 INSERT VALUES (
     TEMP.idOrder,
@@ -354,5 +358,7 @@ INSERT VALUES (
     TEMP.Tag,
     TEMP.PrintedOrderResetBy,
     TEMP.PrintedOrderResetDate,
-    TEMP.IsFBARepackShipment
+    TEMP.IsFBARepackShipment,
+    TEMP.ShipmentReadyDate,
+    TEMP.OrderCancelDate
 )

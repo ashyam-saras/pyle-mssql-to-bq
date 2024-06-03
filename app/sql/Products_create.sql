@@ -196,5 +196,8 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     ToolingFee STRING,
     LaunchDate TIMESTAMP,
     LifeCycleNotes STRING,
-    AmazonSellingPrice FLOAT64
+    AmazonSellingPrice FLOAT64,
+    Body_HTMlUpdate STRING,
+    ReviewedByComplianceConsultant BOOLEAN,
+    ConsultantCompany STRING
 );
