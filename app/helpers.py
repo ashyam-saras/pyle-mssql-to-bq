@@ -223,6 +223,7 @@ def gs_csv_to_bq(
     """
     logger.info("Loading CSV data from GCS to BigQuery.")
     job_config = bigquery.LoadJobConfig(
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
         source_format=bigquery.SourceFormat.CSV,
         skip_leading_rows=1,
         autodetect=False,
