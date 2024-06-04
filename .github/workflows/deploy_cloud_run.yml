@@ -64,8 +64,8 @@ jobs:
             --allow-unauthenticated \
             --region ${{ vars.REGION }} \
             --service-account ${{ vars.SERVICE_ACCOUNT_NAME }} \
-            --cpu 4 \
-            --memory 16Gi \
+            --cpu 1 \
+            --memory 2Gi \
             --timeout 540s \
             --concurrency 1 \
             --port 80 \
