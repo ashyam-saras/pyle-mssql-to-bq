@@ -122,5 +122,10 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     InvoiceEmailAddresses STRING,
     IsAllowDirectPO STRING,
     SalesType STRING,
-    CustomerType STRING
+    CustomerType STRING,
+    SalesCountry STRING,
+    PyleFBAName STRING,
+    isNewCustomer INT64,
+    ARInvoicing STRING,
+    AccountPaymentMethod STRING
 );
