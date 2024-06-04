@@ -123,7 +123,12 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     InvoiceEmailAddresses STRING,
     IsAllowDirectPO STRING,
     SalesType STRING,
-    CustomerType STRING
+    CustomerType STRING,
+    SalesCountry STRING,
+    PyleFBAName STRING,
+    isNewCustomer INT64,
+    ARInvoicing STRING,
+    AccountPaymentMethod STRING
 );
 
 -- Merge data from temp table to main table
@@ -255,7 +260,12 @@ WHEN MATCHED THEN
         MAIN.InvoiceEmailAddresses = TEMP.InvoiceEmailAddresses,
         MAIN.IsAllowDirectPO = TEMP.IsAllowDirectPO,
         MAIN.SalesType = TEMP.SalesType,
-        MAIN.CustomerType = TEMP.CustomerType
+        MAIN.CustomerType = TEMP.CustomerType,
+        MAIN.SalesCountry = TEMP.SalesCountry,
+        MAIN.PyleFBAName = TEMP.PyleFBAName,
+        MAIN.isNewCustomer = TEMP.isNewCustomer,
+        MAIN.ARInvoicing = TEMP.ARInvoicing,
+        MAIN.AccountPaymentMethod = TEMP.AccountPaymentMethod
 WHEN NOT MATCHED THEN
 INSERT VALUES (
     TEMP.idcustomer,
@@ -381,5 +391,10 @@ INSERT VALUES (
     TEMP.InvoiceEmailAddresses,
     TEMP.IsAllowDirectPO,
     TEMP.SalesType,
-    TEMP.CustomerType
+    TEMP.CustomerType,
+    TEMP.SalesCountry,
+    TEMP.PyleFBAName,
+    TEMP.isNewCustomer,
+    TEMP.ARInvoicing,
+    TEMP.AccountPaymentMethod
 )
