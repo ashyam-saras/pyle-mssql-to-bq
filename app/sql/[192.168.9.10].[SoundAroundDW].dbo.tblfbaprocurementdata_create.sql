@@ -50,5 +50,12 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     inv_age_365_plus_days INT64,
     warehouse_tx_qty INT64,
     Brand STRING,
-    IsActiveList STRING
+    IsActiveList STRING,
+    Country STRING,
+    SA_Stock_US INT64,
+    SA_Stock_CA INT64,
+    SA_Stock_UK INT64,
+    SA_Stock_EU INT64,
+    Warehouse_6_Qty INT64,
+    Warehouse_7_Qty INT64
 );

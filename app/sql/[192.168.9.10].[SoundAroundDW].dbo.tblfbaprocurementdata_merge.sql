@@ -51,7 +51,14 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     inv_age_365_plus_days INT64,
     warehouse_tx_qty INT64,
     Brand STRING,
-    IsActiveList STRING
+    IsActiveList STRING,
+    Country STRING,
+    SA_Stock_US INT64,
+    SA_Stock_CA INT64,
+    SA_Stock_UK INT64,
+    SA_Stock_EU INT64,
+    Warehouse_6_Qty INT64,
+    Warehouse_7_Qty INT64
 );
 
 -- Merge data from temp table to main table
@@ -111,7 +118,14 @@ WHEN MATCHED THEN
         MAIN.inv_age_365_plus_days = TEMP.inv_age_365_plus_days,
         MAIN.warehouse_tx_qty = TEMP.warehouse_tx_qty,
         MAIN.Brand = TEMP.Brand,
-        MAIN.IsActiveList = TEMP.IsActiveList
+        MAIN.IsActiveList = TEMP.IsActiveList,
+        MAIN.Country = TEMP.Country,
+        MAIN.SA_Stock_US = TEMP.SA_Stock_US,
+        MAIN.SA_Stock_CA = TEMP.SA_Stock_CA,
+        MAIN.SA_Stock_UK = TEMP.SA_Stock_UK,
+        MAIN.SA_Stock_EU = TEMP.SA_Stock_EU,
+        MAIN.Warehouse_6_Qty = TEMP.Warehouse_6_Qty,
+        MAIN.Warehouse_7_Qty = TEMP.Warehouse_7_Qty
 WHEN NOT MATCHED THEN
 INSERT VALUES (
     TEMP.AutoId,
@@ -165,5 +179,12 @@ INSERT VALUES (
     TEMP.inv_age_365_plus_days,
     TEMP.warehouse_tx_qty,
     TEMP.Brand,
-    TEMP.IsActiveList
+    TEMP.IsActiveList,
+    TEMP.Country,
+    TEMP.SA_Stock_US,
+    TEMP.SA_Stock_CA,
+    TEMP.SA_Stock_UK,
+    TEMP.SA_Stock_EU,
+    TEMP.Warehouse_6_Qty,
+    TEMP.Warehouse_7_Qty
 )
