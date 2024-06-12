@@ -1,4 +1,4 @@
 {
     "source_table": "Products",
-    "date_filter_column": "LastupdateDate"
+    "date_filter_column": null
 }
