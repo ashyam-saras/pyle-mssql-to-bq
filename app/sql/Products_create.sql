@@ -199,5 +199,7 @@ CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
     AmazonSellingPrice FLOAT64,
     Body_HTMlUpdate STRING,
     ReviewedByComplianceConsultant BOOLEAN,
-    ConsultantCompany STRING
+    ConsultantCompany STRING,
+    PPCStrategy	STRING,
+    PPCStrategyNote STRING
 );

@@ -200,7 +200,9 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
     AmazonSellingPrice FLOAT64,
     Body_HTMlUpdate STRING,
     ReviewedByComplianceConsultant BOOLEAN,
-    ConsultantCompany STRING
+    ConsultantCompany STRING,
+    PPCStrategy	STRING,
+    PPCStrategyNote STRING
 );
 
 -- Merge data from temp table to main table
@@ -409,7 +411,9 @@ WHEN MATCHED THEN
         MAIN.AmazonSellingPrice = TEMP.AmazonSellingPrice,
         MAIN.Body_HTMlUpdate = TEMP.Body_HTMlUpdate,
         MAIN.ReviewedByComplianceConsultant = TEMP.ReviewedByComplianceConsultant,
-        MAIN.ConsultantCompany = TEMP.ConsultantCompany
+        MAIN.ConsultantCompany = TEMP.ConsultantCompany,
+        MAIN.PPCStrategy = TEMP.PPCStrategy,
+        MAIN.PPCStrategyNote = TEMP.PPCStrategyNote
 WHEN NOT MATCHED THEN
 INSERT VALUES (
     TEMP.idProduct,
@@ -612,5 +616,7 @@ INSERT VALUES (
     TEMP.AmazonSellingPrice,
     TEMP.Body_HTMlUpdate,
     TEMP.ReviewedByComplianceConsultant,
-    TEMP.ConsultantCompany
+    TEMP.ConsultantCompany,
+    TEMP.PPCStrategy,
+    TEMP.PPCStrategyNote
 )
