@@ -71,7 +71,7 @@ jobs:
           if gcloud scheduler jobs describe ${{ matrix.name }} --location "${{ vars.REGION }}" &> /dev/null; then
             echo "Updating existing Cloud Scheduler job ${{ matrix.name }}..."
             gcloud scheduler jobs update http ${{ matrix.name }} \
-              --uri "https://msssql-to-bq-fastpi-vytfvphpna-ue.a.run.app" \
+              --uri "https://msssql-to-bq-fastpi-vytfvphpna-ue.a.run.app/mssql_to_bq" \
               --location "${{ vars.REGION }}" \
               --schedule "0 0 * * *" \
               --time-zone "IST" \
@@ -80,7 +80,7 @@ jobs:
           else
             echo "Creating new Cloud Scheduler job ${{ matrix.name }}..."
             gcloud scheduler jobs create http ${{ matrix.name }} \
-              --uri "https://msssql-to-bq-fastpi-vytfvphpna-ue.a.run.app" \
+              --uri "https://msssql-to-bq-fastpi-vytfvphpna-ue.a.run.app/mssql_to_bq" \
               --location "${{ vars.REGION }}" \
               --schedule "0 0 * * *" \
               --time-zone "IST" \
