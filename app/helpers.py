@@ -8,6 +8,7 @@ import pandas as pd
 from google.cloud import bigquery, storage
 from sqlalchemy import create_engine
 from sshtunnel import SSHTunnelForwarder
+from google.api_core import exceptions as google_exceptions
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("helper")
@@ -138,6 +139,7 @@ def merge_temp_table(
         bq_dataset (str): The BigQuery dataset.
         merge_sql_fname (str): The name of the SQL file containing the merge query.
         table_name (str): The name of the table to merge.
+        temp_table (str): The name of the temporary table.
         delete_temp_table (bool, optional): Whether to delete the temporary table after
             merging. Defaults to True.
         drop_and_create (bool, optional): Whether to drop and create the destination table before
@@ -148,11 +150,30 @@ def merge_temp_table(
     # Check if merge SQL file exists
     query_path = SQL_DIR / merge_sql_fname
     if not query_path.exists():
-        raise FileNotFoundError("SQL file not found. Must be named `{src_table}_merge.sql`.")
+        raise FileNotFoundError(f"SQL file not found: {query_path}")
+
+    # Get the schema of the destination table
+    dest_table_ref = bq_client.dataset(bq_dataset, project=bq_project).table(table_name)
+    dest_table = bq_client.get_table(dest_table_ref)
+    dest_schema = [field.name for field in dest_table.schema]
+
+    # Get the schema of the temporary table
+    temp_table_ref = bq_client.dataset(bq_dataset, project=bq_project).table(temp_table)
+    temp_table = bq_client.get_table(temp_table_ref)
+    temp_schema = [field.name for field in temp_table.schema]
+
+    # Find missing columns
+    missing_columns = set(dest_schema) - set(temp_schema)
+    if missing_columns:
+        logger.warning("Missing columns: %s", missing_columns)
 
     # Read merge SQL file
     with open(query_path, "r", encoding="utf-8") as f:
         query = f.read()
+
+    # Modify the query to handle missing columns
+    select_clause = ", ".join([f"t.{col}" if col in temp_schema else f"NULL as {col}" for col in dest_schema])
+    query = query.replace("SELECT *", f"SELECT {select_clause}")
 
     # Format query
     query = query.format(
@@ -166,19 +187,35 @@ def merge_temp_table(
     if drop_and_create:
         logger.info("Dropping destination table.")
         drop_query = f"DROP TABLE IF EXISTS {bq_project}.{bq_dataset}.{table_name}"
-        execute_job = bq_client.query(drop_query)
-        execute_job.result()
-        logger.info("Dropped destination table.")
+        try:
+            execute_job = bq_client.query(drop_query)
+            execute_job.result()
+            logger.info("Dropped destination table.")
+        except Exception as e:
+            logger.error(f"Error dropping destination table: {str(e)}")
+            raise
 
-    logger.debug("Executing query: %s", query)
-    execute_job = bq_client.query(query)
-    execute_job.result()  # wait for job to complete
-    logger.info("Merged temp table with destination table.")
+    logger.debug("Executing merge query: %s", query)
+    try:
+        execute_job = bq_client.query(query)
+        execute_job.result()  # wait for job to complete
+        logger.info("Merged temp table with destination table.")
+    except google_exceptions.BadRequest as e:
+        logger.error(f"BadRequest error during merge: {str(e)}")
+        logger.error(f"Error details: {e.errors}")
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error during merge: {str(e)}")
+        raise
 
     if delete_temp_table:
         logger.info("Deleting temp table.")
-        bq_client.delete_table(f"{bq_project}.{bq_dataset}.{temp_table}")
-        logger.info("Deleted temp table.")
+        try:
+            bq_client.delete_table(f"{bq_project}.{bq_dataset}.{temp_table}")
+            logger.info("Deleted temp table.")
+        except Exception as e:
+            logger.error(f"Error deleting temp table: {str(e)}")
+            # Don't raise an exception here, as the main operation (merge) has already completed
 
 
 def upload_to_gs(
@@ -222,7 +259,13 @@ def gs_csv_to_bq(
         table_name (str): The name of the table to load the data into.
     """
     logger.info("Loading CSV data from GCS to BigQuery.")
+    
+    # Get the schema of the destination table
+    dest_table_ref = bq_client.dataset(bq_dataset, project=bq_project).table(table_name)
+    dest_table = bq_client.get_table(dest_table_ref)
+    
     job_config = bigquery.LoadJobConfig(
+        schema=dest_table.schema,
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
         source_format=bigquery.SourceFormat.CSV,
         skip_leading_rows=1,
