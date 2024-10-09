@@ -5,10 +5,10 @@ from typing import Any
 from urllib.parse import quote
 
 import pandas as pd
+from google.api_core import exceptions as google_exceptions
 from google.cloud import bigquery, storage
 from sqlalchemy import create_engine
 from sshtunnel import SSHTunnelForwarder
-from google.api_core import exceptions as google_exceptions
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("helper")
@@ -130,6 +130,9 @@ def merge_temp_table(
     delete_temp_table: bool = True,
     drop_and_create: bool = False,
 ):
+    logger.info(
+        f"Merging temp table. Project: {bq_project}, Dataset: {bq_dataset}, Table: {table_name}, Temp Table: {temp_table}"
+    )
     """
     Merge a temporary table with the destination table.
 
@@ -159,8 +162,8 @@ def merge_temp_table(
 
     # Get the schema of the temporary table
     temp_table_ref = bq_client.dataset(bq_dataset, project=bq_project).table(temp_table)
-    temp_table = bq_client.get_table(temp_table_ref)
-    temp_schema = [field.name for field in temp_table.schema]
+    temp_table_obj = bq_client.get_table(temp_table_ref)
+    temp_schema = [field.name for field in temp_table_obj.schema]
 
     # Find missing columns
     missing_columns = set(dest_schema) - set(temp_schema)
@@ -180,13 +183,12 @@ def merge_temp_table(
         bq_project=bq_project,
         bq_dataset=bq_dataset,
         table_name=table_name,
-        temp_table=temp_table,
         temp_table_name=temp_table,
     )
 
     if drop_and_create:
         logger.info("Dropping destination table.")
-        drop_query = f"DROP TABLE IF EXISTS {bq_project}.{bq_dataset}.{table_name}"
+        drop_query = f"DROP TABLE IF EXISTS `{bq_project}.{bq_dataset}.{table_name}`"
         try:
             execute_job = bq_client.query(drop_query)
             execute_job.result()
@@ -259,11 +261,11 @@ def gs_csv_to_bq(
         table_name (str): The name of the table to load the data into.
     """
     logger.info("Loading CSV data from GCS to BigQuery.")
-    
+
     # Get the schema of the destination table
     dest_table_ref = bq_client.dataset(bq_dataset, project=bq_project).table(table_name)
     dest_table = bq_client.get_table(dest_table_ref)
-    
+
     job_config = bigquery.LoadJobConfig(
         schema=dest_table.schema,
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
