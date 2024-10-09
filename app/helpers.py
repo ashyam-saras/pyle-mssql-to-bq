@@ -228,6 +228,7 @@ def gs_csv_to_bq(
         skip_leading_rows=1,
         autodetect=False,
         allow_quoted_newlines=True,
+        ignore_unknown_values=True,
     )
     table_id = f"{bq_project}.{bq_dataset}.{table_name}"
     logger.debug("Loading data from `%s` to `%s`...", gs_uri, table_id)
