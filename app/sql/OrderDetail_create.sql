@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
+CREATE OR REPLACE TABLE `{bq_project}.{bq_dataset}.{table_name}` (
     idOrder FLOAT64,
     idProduct INT64,
     OrderItemID STRING,

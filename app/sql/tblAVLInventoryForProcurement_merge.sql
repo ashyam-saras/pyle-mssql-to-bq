@@ -1,5 +1,5 @@
 -- Create main table if not exists
-CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
+CREATE TABLE IF NOT EXISTS `{bq_project}.{bq_dataset}.{table_name}` (
     Autoid INT64,
     IdWarehouse INT64,
     SKU STRING,
@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
 );
 
 -- Merge data from temp table to main table
-MERGE {bq_project}.{bq_dataset}.{table_name} AS MAIN
-USING {bq_project}.{bq_dataset}.{temp_table_name} AS TEMP
+MERGE `{bq_project}.{bq_dataset}.{table_name}` AS MAIN
+USING `{bq_project}.{bq_dataset}.{temp_table_name}` AS TEMP
 ON MAIN.Autoid = TEMP.Autoid
 WHEN MATCHED THEN
     UPDATE SET
