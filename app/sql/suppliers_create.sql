@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
+CREATE OR REPLACE TABLE `{bq_project}.{bq_dataset}.{table_name}` (
     idSupplier INT64,
     supplierName STRING,
     supplierEmail STRING,

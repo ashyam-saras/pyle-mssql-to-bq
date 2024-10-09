@@ -1,5 +1,5 @@
 -- Create main table if not exists
-CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
+CREATE TABLE IF NOT EXISTS `{bq_project}.{bq_dataset}.{table_name}` (
     idProduct INT64,
     idCategory INT64,
     idautonumber INT64,
@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS {bq_project}.{bq_dataset}.{table_name} (
 );
 
 -- Merge data from temp table to main table
-MERGE {bq_project}.{bq_dataset}.{table_name} AS MAIN
-USING {bq_project}.{bq_dataset}.{temp_table_name} AS TEMP
+MERGE `{bq_project}.{bq_dataset}.{table_name}` AS MAIN
+USING `{bq_project}.{bq_dataset}.{temp_table_name}` AS TEMP
 ON MAIN.idautonumber = TEMP.idautonumber
 WHEN MATCHED THEN
     UPDATE SET

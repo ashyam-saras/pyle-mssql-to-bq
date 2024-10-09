@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE {bq_project}.{bq_dataset}.{table_name} (
+CREATE OR REPLACE TABLE `{bq_project}.{bq_dataset}.{table_name}` (
     Autoid INT64,
     IdWarehouse INT64,
     SKU STRING,
